@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UV Netware - Job Onboarding</title>
+    <meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="bingbot" content="noindex, nofollow">
+<meta name="robots" content="noarchive">
+<meta name="robots" content="nosnippet">
+    <link rel="icon" type="image/svg+xml" href="https://uvnetware.com/favicon/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #304ffe;
+            --secondary-color: #000;
+            --white: #fff;
+            --light-bg: #ffffff;
+            --step-inactive: #ccc;
+            --step-active-text: #212121;
+            --border-color: #e0e0e0;
+            --header-height: 75px;
+            --footer-height: 75px;
+        }
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: #000000;
+            line-height: 1.45;
+            overflow-x: hidden;
+        }
+        .onboarding-app {
+            display: flex;
+            background-color: var(--white);
+            max-width: 2100px;
+            margin: 0 auto;
+        }
+        .mobile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: var(--header-height);
+            padding: 0 21px;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            max-width: inherit;
+            z-index: 21;
+        }
+        .content-area {
+            flex-grow: 1;
+            padding: 30px;
+            padding-top: calc(var(--header-height) + 30px);
+            max-width: 100%;
+            overflow-y: auto;
+        }
+        .mobile-logo-group {
+            display: flex;
+            align-items: center;
+        }
+        .logo { max-width: 45px; height: auto; margin-right: 12px; }
+        .company-name { color: var(--secondary-color); font-size: 1.45em; margin-bottom: 12px; font-weight: 500; }
+        .hamburger-icon {
+            display: flex; flex-direction: column; justify-content: space-around;
+            width: 30px; height: 30px; cursor: pointer; padding: 5px; z-index: 30;
+        }
+        .hamburger-icon div {
+            width: 100%; height: 3px; background-color: var(--primary-color);
+            border-radius: 2px; transition: all 0.3s linear;
+        }
+        .hamburger-icon.open .bar1 { transform: rotate(-45deg) translate(-5px, 6px); }
+        .hamburger-icon.open .bar2 { opacity: 0; }
+        .hamburger-icon.open .bar3 { transform: rotate(45deg) translate(-5px, -6px); }
+        .sidebar {
+            width: 300px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 21px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            display: none;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 75%;
+            height: 100%;
+            background-color: var(--white);
+            z-index: 25;
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+            border-left: 1px solid #999999;
+            padding: 20px;
+            padding-top: calc(var(--header-height) + 20px); /* Space for mobile header */
+            overflow-y: auto;
+            display: block;
+        }
+        .mobile-overlay.open {
+            transform: translateX(0);
+        }
+        .overlay-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 21;
+        }
+        .overlay-backdrop.open {
+            display: block;
+        }
+        .step-list { list-style: none; padding: 0; margin-top: 0; }
+        .step-item {
+            display: flex; align-items: center; padding: 15px 15px; margin-bottom: 12px;
+            cursor: pointer; transition: all 0.3s; border-radius: 9px; border: 1px solid transparent;
+        }
+        .step-indicator {
+            width: 30px; height: 30px; border-radius: 75%; background-color: var(--step-inactive);
+            color: var(--white); display: flex; justify-content: center; align-items: center;
+            margin-right: 15px; font-weight: 500; font-size: 1.1em; transition: background-color 0.3s;
+        }
+        .step-item.visited .step-indicator { background-color: #a0c4ff; }
+        .step-item.active { background-color: var(--light-bg); border-color: var(--primary-color); }
+        .step-item.active .step-indicator { background-color: var(--primary-color); transform: scale(1.05); }
+        .step-item.active .step-name { color: var(--primary-color); font-weight: 400; }
+        .step-name { font-weight: 400; color: var(--step-active-text); }
+        .form-step {
+            display: none;
+            padding-bottom: calc(var(--footer-height) + 30px); 
+            animation: fadeIn 0.4s ease-out;
+        }
+        .form-step.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2 { color: var(--primary-color); font-size: 1.75em; margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid var(--light-bg); padding-bottom: 10px; font-weight: 300; }
+        h3 { color: var(--secondary-color); font-size: 1.21em; margin-top: 30px; margin-bottom: 15px; border-left: 5px solid var(--primary-color); padding-left: 10px; font-weight: 400; }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 0; }
+        .form-group { margin-bottom: 5px; }
+        input:not([type="radio"]):not([type="checkbox"]), select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; font-size: 1em; }
+        input:focus, select:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(48, 79, 254, 0.1); }
+        .input-inline { display: flex; }
+        .input-inline input { border-right: none; border-radius: 6px 0 0 6px; }
+        .input-inline span { padding: 12px; background-color: var(--light-bg); color: var(--secondary-color); border: 1px solid var(--border-color); border-left: none; border-radius: 0 6px 6px 0; display: flex; align-items: center; font-weight: 500; }
+        .required-doc-list li { background-color: #e6f0ff; padding: 10px; margin-bottom: 8px; border-left: 5px solid var(--primary-color); border-radius: 4px; font-size: 0.9em; font-weight: 500; }
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: var(--footer-height);
+            padding: 0 20px;
+            background-color: var(--white);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+        .btn { padding: 12px 25px; border: none; border-radius: 6px; font-size: 1em; cursor: pointer; font-weight: 500; transition: background-color 0.3s; }
+        .btn-primary { background-color: var(--primary-color); color: var(--white); min-width: 120px; }
+        .btn-secondary { background-color: var(--light-bg); color: var(--secondary-color); border: 1px solid var(--border-color); min-width: 120px; }
+
+        .mobile-progress-bar {
+            background-color: var(--border-color); height: 6px;
+            margin: 0 0 20px 0; border-radius: 3px; overflow: hidden;
+            display: block;
+        }
+        .progress-indicator {
+            height: 100%; width: 0%; background-color: var(--primary-color);
+            transition: width 0.5s ease-in-out;
+        }
+        @media (min-width: 755px) {
+            .mobile-header { display: none; }
+            .sidebar { display: block; position: sticky; }
+            .content-area {
+                padding: 40px 60px;
+                padding-top: 40px;
+                max-width: 900px;
+            }
+            .onboarding-app {
+                margin: 45px auto;
+                overflow: hidden;
+            }
+            .mobile-progress-bar { display: none; }
+            .form-navigation {
+                position: static;
+                box-shadow: none;
+                height: auto;
+                padding: 20px 0 0 0;
+                border-top: 1px solid var(--border-color);
+                margin-top: 30px;
+                justify-content: flex-end;
+            }
+            #btn_back { margin-right: 15px; }
+            .form-step { padding-bottom: 0; }
+            .form-row { grid-template-columns: repeat(2, 1fr); }
+            .form-row .full-width { grid-column: 1 / -1; }
+            .mobile-overlay, .overlay-backdrop { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-app">
+
+        <!-- MOBILE HEADER -->
+        <div class="mobile-header">
+            <div class="mobile-logo-group">
+                <img src="https://uvnetware.com/raw/logo-branding/uv-netware-ti.png" class="logo">
+                <p class="company-name">Onboarding</p>
+            </div>
+
+            <div class="hamburger-icon" id="hamburger_btn">
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR (DESKTOP) -->
+        <div class="sidebar">
+            <header>
+                <img src="https://uvnetware.com/raw/logo-branding/uv-netware-ti.png" class="logo">
+                <p class="company-name">Onboarding</p>
+            </header>
+
+            <ul class="step-list" id="step_list_desktop">
+                <li class="step-item active" data-step="1"><span class="step-indicator">1</span><span class="step-name">Required Documents</span></li>
+                <li class="step-item" data-step="2"><span class="step-indicator">2</span><span class="step-name">Personal & Contact Info</span></li>
+                <li class="step-item" data-step="3"><span class="step-indicator">3</span><span class="step-name">Job & Educational Details</span></li>
+                <li class="step-item" data-step="4"><span class="step-indicator">4</span><span class="step-name">Bank & Email Creation</span></li>
+                <li class="step-item" data-step="5"><span class="step-indicator">5</span><span class="step-name">Asset Deposit Details</span></li>
+                <li class="step-item" data-step="6"><span class="step-indicator">6</span><span class="step-name">Review & Submit</span></li>
+            </ul>
+        </div>
+
+        <!-- MOBILE SLIDE MENU -->
+        <div class="mobile-overlay" id="mobile_menu">
+            <h3>Jump to Section:</h3>
+            <ul class="step-list" id="step_list_mobile">
+                <li class="step-item active" data-step="1"><span class="step-indicator">1</span><span class="step-name">Required Documents</span></li>
+                <li class="step-item" data-step="2"><span class="step-indicator">2</span><span class="step-name">Personal & Contact Info</span></li>
+                <li class="step-item" data-step="3"><span class="step-indicator">3</span><span class="step-name">Job & Educational Details</span></li>
+                <li class="step-item" data-step="4"><span class="step-indicator">4</span><span class="step-name">Bank & Email Creation</span></li>
+                <li class="step-item" data-step="5"><span class="step-indicator">5</span><span class="step-name">Asset Deposit Details</span></li>
+                <li class="step-item" data-step="6"><span class="step-indicator">6</span><span class="step-name">Review & Submit</span></li>
+            </ul>
+        </div>
+
+        <div class="overlay-backdrop" id="backdrop"></div>
+
+        <!-- MAIN CONTENT -->
+        <div class="content-area">
+
+            <div class="mobile-progress-bar">
+                <div class="progress-indicator" id="progress_bar"></div>
+            </div>
+
+            <form id="onboardingForm" action="#" method="POST" enctype="multipart/form-data">
+
+                <!-- STEP 1 -->
+                <div class="form-step active" data-step="1">
+                    <h2>1. Required Documents (Upload Section)</h2>
+                    <p>Please upload clear copies of the following documents.</p>
+
+                    <ul class="required-doc-list">
+                        <li>CV / Resume, 10th & 12th Marksheet (Required)</li>
+                        <li>Bank proof & Government ID Proof (Required)</li>
+                        <li>Signature image (JPG) & Passport-size photo (Required)</li>
+                    </ul>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>CV / Resume *</label>
+                            <input type="file" name="upload_cv" accept=".pdf,.jpg,.png" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>10th Marksheet *</label>
+                            <input type="file" name="upload_10th" accept=".pdf,.jpg,.png" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>12th Marksheet *</label>
+                            <input type="file" name="upload_12th" accept=".pdf,.jpg,.png" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Government ID Proof *</label>
+                            <input type="file" name="upload_id" accept=".pdf,.jpg,.png" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bank Proof *</label>
+                            <input type="file" name="upload_bank_proof" accept=".pdf,.jpg,.png" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Signature (JPG only) *</label>
+                            <input type="file" name="upload_signature" accept=".jpg" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Passport Photo *</label>
+                            <input type="file" name="upload_photo" accept=".jpg,.png" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Degree Certificate (Optional)</label>
+                            <input type="file" name="upload_degree" accept=".pdf,.jpg,.png">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Additional Certificates (Optional)</label>
+                            <input type="file" name="upload_additional" multiple accept=".pdf,.jpg,.png">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="form-step" data-step="2">
+                    <h2>2. Personal & Contact Information</h2>
+
+                    <h3>Personal Details</h3>
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" name="full_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Date of Birth *</label>
+                            <input type="date" name="dob" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Gender *</label>
+                            <div class="radio-group">
+                                <input type="radio" name="gender" value="Male" required> Male
+                                <input type="radio" name="gender" value="Female"> Female
+                                <input type="radio" name="gender" value="Other"> Other
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Blood Group</label>
+                            <input type="text" name="blood_group">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Current Address *</label>
+                            <input type="text" name="current_address" required>
+                        </div>
+
+                    </div>
+
+                    <h3>Contact Information</h3>
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label>Mobile Number *</label>
+                            <input type="tel" name="mobile_number" pattern="[0-9]{10}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Alternate Phone</label>
+                            <input type="tel" name="alternate_phone" pattern="[0-9]{10}">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Email *</label>
+                            <input type="email" name="current_email" required>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="form-step" data-step="3">
+                    <h2>3. Job & Educational Details</h2>
+
+                    <h3>Job Details</h3>
+                    <div class="form-group">
+    <label>Position Selected *</label>
+    <select name="position_selected" required>
+        <option value="">Select a Position</option>
+
+        <optgroup label="Management">
+            <option value="Project Manager">Project Manager</option>
+            <option value="Operations Manager">Operations Manager</option>
+            <option value="Sales Manager">Sales Manager</option>
+            <option value="Product Manager">Product Manager</option>
+            <option value="Marketing Manager">Marketing Manager</option>
+            <option value="Business Development Manager">Business Development Manager</option>
+        </optgroup>
+
+        <optgroup label="Technical">
+            <option value="Frontend Developer">Frontend Developer</option>
+            <option value="Backend Developer">Backend Developer</option>
+            <option value="Full Stack Developer">Full Stack Developer</option>
+            <option value="Mobile App Developer">Mobile App Developer</option>
+            <option value="UI/UX Designer">UI/UX Designer</option>
+            <option value="QA Tester">QA Tester</option>
+            <option value="DevOps Engineer">DevOps Engineer</option>
+            <option value="Data Analyst">Data Analyst</option>
+            <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+        </optgroup>
+
+        <optgroup label="Administration & HR">
+            <option value="HR Executive">HR Executive</option>
+            <option value="HR Manager">HR Manager</option>
+            <option value="Recruitment Specialist">Recruitment Specialist</option>
+            <option value="Office Administrator">Office Administrator</option>
+            <option value="Training Coordinator">Training Coordinator</option>
+        </optgroup>
+
+        <optgroup label="Customer & Support">
+            <option value="Customer Representative">Customer Representative</option>
+            <option value="Support Specialist">Support Specialist</option>
+            <option value="Key Account Manager">Key Account Manager</option>
+            <option value="Affiliate Manager">Affiliate Manager</option>
+            <option value="Grievance Officer">Grievance Officer</option>
+        </optgroup>
+
+        <optgroup label="Legal & Compliance">
+            <option value="Legal Officer">Legal Officer</option>
+            <option value="Compliance Manager">Compliance Manager</option>
+            <option value="Nodal Officer">Nodal Officer</option>
+        </optgroup>
+
+    </select>
+</div>
+
+
+                    <h3>Education</h3>
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label>College / University *</label>
+                            <input type="text" name="college_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Enrollment Number</label>
+                            <input type="text" name="enrollment_number">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- STEP 4 -->
+                <div class="form-step" data-step="4">
+                    <h2>4. Bank Details & Company Email</h2>
+
+                    <h3>Company Email</h3>
+                    <div class="input-inline">
+                        <input type="text" name="official_email_prefix" placeholder="john.doe" required>
+                        <span>@uvnetware.com</span>
+                    </div>
+
+                    <h3>Bank Details</h3>
+                    <div class="form-row">
+
+                        <div class="form-group">
+                            <label>Account Holder *</label>
+                            <input type="text" name="account_holder_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Bank Name *</label>
+                            <input type="text" name="bank_name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Account Number *</label>
+                            <input type="text" name="account_number" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>IFSC *</label>
+                            <input type="text" name="ifsc_code" required>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Open Salary Account? *</label>
+                            <div class="radio-group">
+                                <input type="radio" name="salary_account" value="Yes" required> Yes
+                                <input type="radio" name="salary_account" value="No"> No
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- STEP 5 -->
+                <div class="form-step" data-step="5">
+                    <h2>5. Company Asset Deposit</h2>
+
+                    <p>Your deposit unlocks assigned company equipment. 10% reimbursed monthly.</p>
+
+                    <div class="form-row">
+
+                        <div class="form-group full-width">
+                            <label>Deposit Amount *</label>
+                            <input type="number" name="deposit_amount" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Transaction ID *</label>
+                            <input type="text" name="deposit_transaction_id" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Transaction Date *</label>
+                            <input type="date" name="deposit_date" required>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- STEP 6 -->
+                <div class="form-step" data-step="6">
+                    <h2>6. Review & Final Confirmation</h2>
+                    <p>Review your details before submitting.</p>
+
+                    <!-- NEW FINAL SUBMIT BUTTON -->
+                    <button type="button" class="btn btn-primary full-width" id="custom_submit_btn" style="margin-top:20px;">
+                        Finish & Continue →
+                    </button>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-secondary" id="btn_back">&larr; Back</button>
+                    <button type="button" class="btn btn-primary" id="btn_next">Next &rarr;</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+    console.log("🚀 Onboarding JS Loaded");
+
+    // Core Elements
+    const form = document.getElementById('onboardingForm');
+    const steps = document.querySelectorAll('.form-step');
+    const btnNext = document.getElementById('btn_next');
+    const btnBack = document.getElementById('btn_back');
+    const customSubmitBtn = document.getElementById('custom_submit_btn');
+    const progressBar = document.getElementById('progress_bar');
+
+    let currentStep = 1;
+    const totalSteps = steps.length;
+
+    // Mobile Menu
+    const hamburgerBtn = document.getElementById('hamburger_btn');
+    const mobileMenu = document.getElementById('mobile_menu');
+    const backdrop = document.getElementById('backdrop');
+
+    // Step Sidebar (Desktop & Mobile)
+    const stepItemsDesktop = document.querySelectorAll('#step_list_desktop .step-item');
+    const stepItemsMobile = document.querySelectorAll('#step_list_mobile .step-item');
+    const allStepItems = [...stepItemsDesktop, ...stepItemsMobile];
+
+    // -------------------------------------------------------------
+    // MENU TOGGLE
+    // -------------------------------------------------------------
+    function toggleMenu(open) {
+        const isOpen = open !== undefined ? open : !mobileMenu.classList.contains('open');
+        mobileMenu.classList.toggle('open', isOpen);
+        hamburgerBtn.classList.toggle('open', isOpen);
+        backdrop.classList.toggle('open', isOpen);
+        document.body.style.overflow = isOpen ? "hidden" : "auto";
+    }
+
+    hamburgerBtn.addEventListener('click', () => toggleMenu());
+    backdrop.addEventListener('click', () => toggleMenu(false));
+
+    // -------------------------------------------------------------
+    // UPDATE STEP VIEW
+    // -------------------------------------------------------------
+    function updateView() {
+
+        steps.forEach(step => {
+            step.classList.toggle('active', parseInt(step.dataset.step) === currentStep);
+        });
+
+        allStepItems.forEach(item => {
+            const stepNum = parseInt(item.dataset.step);
+            item.classList.toggle('active', stepNum === currentStep);
+            item.classList.toggle('visited', stepNum < currentStep);
+        });
+
+        // Progress Bar
+        progressBar.style.width = ((currentStep - 1) / (totalSteps - 1) * 100) + "%";
+
+        // Navigation buttons
+        btnBack.style.display = currentStep > 1 ? "inline-block" : "none";
+
+        if (currentStep === totalSteps) {
+            btnNext.style.display = "none";
+            customSubmitBtn.style.display = "block";
+        } else {
+            btnNext.style.display = "inline-block";
+            customSubmitBtn.style.display = "none";
+        }
+
+        toggleMenu(false);
+        window.scrollTo(0, 0);
+    }
+
+    // -------------------------------------------------------------
+    // VALIDATE STEP
+    // -------------------------------------------------------------
+    function validateStep(stepNumber) {
+        const section = document.querySelector(`.form-step[data-step="${stepNumber}"]`);
+        const requiredFields = section.querySelectorAll("[required]");
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            field.style.borderColor = "#e0e0e0";
+            let valid = true;
+
+            if (field.type === "radio") {
+                const group = section.querySelectorAll(`input[name="${field.name}"]`);
+                if (![...group].some(r => r.checked)) valid = false;
+
+            } else if (field.type === "file") {
+                if (field.files.length === 0) valid = false;
+
+            } else if (field.tagName === "SELECT") {
+                if (!field.value.trim()) valid = false;
+
+            } else {
+                if (!field.value.trim()) valid = false;
+            }
+
+            if (!valid) {
+                field.style.borderColor = "red";
+                isValid = false;
+            }
+        });
+
+        return isValid;
+    }
+
+    // -------------------------------------------------------------
+    // BUTTON LOGIC
+    // -------------------------------------------------------------
+    btnNext.addEventListener('click', () => {
+        if (validateStep(currentStep)) {
+            currentStep++;
+            updateView();
+        } else {
+            alert("Please complete required fields to continue.");
+        }
+    });
+
+    btnBack.addEventListener('click', () => {
+        currentStep--;
+        updateView();
+    });
+
+    allStepItems.forEach(item => {
+        item.addEventListener("click", () => {
+            currentStep = parseInt(item.dataset.step);
+            updateView();
+        });
+    });
+
+    // -------------------------------------------------------------
+    // ⭐ FINAL SUBMISSION BUTTON (NO FIREBASE, ONLY REDIRECT)
+    // -------------------------------------------------------------
+    customSubmitBtn.addEventListener('click', () => {
+
+        // Validate all steps before submitting
+        for (let i = 1; i < totalSteps; i++) {
+            if (!validateStep(i)) {
+                currentStep = i;
+                updateView();
+                alert("Please complete all required fields before submitting.");
+                return;
+            }
+        }
+
+        // Collect only NON-FILE user input
+        const formData = new FormData(form);
+        let outputData = {};
+
+        formData.forEach((value, key) => {
+            if (!(value instanceof File)) {
+                outputData[key] = value;
+            }
+        });
+
+        // Convert JSON → Base64 → URL safe
+        const encoded = encodeURIComponent(btoa(JSON.stringify(outputData)));
+
+        // Redirect to submit page
+        window.location.href = `/submit.html?data=${encoded}`;
+    });
+
+    // Initialize UI
+    updateView();
+
+});
+
+    </script>
+</html>

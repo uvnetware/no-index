@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UV Netware - Welcome Dashboard</title>
+
+    <!-- Roboto Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+     <link rel="icon" type="image/svg+xml" href="https://uvnetware.com/favicon/favicon.svg">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="bingbot" content="noindex, nofollow">
+<meta name="robots" content="noarchive">
+<meta name="robots" content="nosnippet">
+
+
+    <style>
+        /* ------------------ ROOT THEME (Your exact settings) ------------------ */
+        :root {
+            --primary-color: #304ffe;
+            --secondary-color: #000;
+            --white: #fff;
+            --light-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --header-height: 75px;
+        }
+
+        html { overflow-x: hidden; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--secondary-color);
+            font-family: 'Roboto', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .onboarding-app {
+            display: flex;
+            background-color: var(--white);
+            max-width: 2100px;
+            margin: 0 auto;
+        }
+
+        /* ------------------ MOBILE HEADER ------------------ */
+        .mobile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: var(--header-height);
+            padding: 0 21px;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            z-index: 50;
+        }
+
+        .mobile-logo-group { display: flex; align-items: center; }
+        .logo { max-width: 45px; margin-right: 12px; }
+        .company-name { font-size: 1.45em; font-weight: 500; margin-bottom: 12px; }
+
+        .hamburger-icon {
+            display: flex; flex-direction: column; justify-content: space-around;
+            width: 30px; height: 30px; cursor: pointer;
+        }
+        .hamburger-icon div {
+            width: 100%; height: 3px; background-color: var(--primary-color);
+            border-radius: 2px; transition: all .3s;
+        }
+        .hamburger-icon.open .bar1 { transform: rotate(-45deg) translate(-5px, 6px); }
+        .hamburger-icon.open .bar2 { opacity: 0; }
+        .hamburger-icon.open .bar3 { transform: rotate(45deg) translate(-5px, -6px); }
+
+        /* ------------------ SIDEBAR ------------------ */
+        .sidebar {
+            width: 300px;
+            background-color: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 21px;
+            height: 100vh;
+            flex-shrink: 0;
+            display: none;
+        }
+
+        .sidebar header {
+            display: flex; align-items: center;
+        }
+
+        .sidebar-menu { list-style: none; padding: 0; margin-top: 25px; }
+        .sidebar-menu li {
+            padding: 14px;
+            font-size: 1.1em;
+            font-weight: 400;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .sidebar-menu li.active {
+            background: #eef3ff;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* ------------------ MOBILE SIDEBAR OVERLAY ------------------ */
+        .mobile-overlay {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 75%;
+            height: 100%;
+            padding: 20px;
+            padding-top: 95px;
+            background-color: var(--white);
+            border-left: 1px solid var(--border-color);
+            transform: translateX(100%);
+            transition: 0.3s;
+            z-index: 40;
+        }
+        .mobile-overlay.open { transform: translateX(0); }
+
+        .overlay-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: none;
+            z-index: 39;
+        }
+        .overlay-backdrop.open { display: block; }
+
+        /* ------------------ CONTENT AREA ------------------ */
+        .content-area {
+            flex-grow: 1;
+            padding: 30px;
+            padding-top: calc(var(--header-height) + 30px);
+        }
+
+        .page-title {
+            font-size: 1.8em;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .ref-box {
+            padding: 15px 18px;
+            background: #eef1ff;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 8px;
+            font-size: 1.1em;
+            margin-bottom: 26px;
+        }
+
+        /* ------------------ CARDS ------------------ */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+            gap: 22px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-icon { font-size: 32px; color: var(--primary-color); margin-bottom: 10px; }
+        .card-title { font-size: 1.2em; font-weight: 600; margin-bottom: 6px; }
+        .card-desc { color: #555; font-size: .95em; }
+
+        /* ------------------ TIMELINE ------------------ */
+        .timeline-box {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .timeline-step {
+            padding-left: 26px;
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .timeline-step::before {
+            content: "";
+            position: absolute;
+            left: 0; top: 4px;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--primary-color);
+        }
+
+        .timeline-title { font-size: 1.05em; font-weight: 500; }
+        .timeline-desc { color: #555; font-size: .9em; }
+
+        /* ------------------ RESPONSIVE ------------------ */
+        @media (min-width: 760px) {
+            .mobile-header { display: none; }
+            .sidebar { display: block; }
+            .content-area {
+                padding-top: 40px;
+                padding-left: 60px;
+                padding-right: 60px;
+                max-width: 900px;
+                margin: 45px auto;
+            }
+            .mobile-overlay, .overlay-backdrop { display: none !important; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="onboarding-app">
+
+    <!-- ------------------ MOBILE HEADER ------------------ -->
+    <div class="mobile-header">
+        <div class="mobile-logo-group">
+            <img src="https://uvnetware.com/raw/logo-branding/uv-netware-ti.png" class="logo">
+            <p class="company-name">Welcome</p>
+        </div>
+        <div class="hamburger-icon" id="hamburger_btn">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+    </div>
+
+    <!-- ------------------ SIDEBAR ------------------ -->
+    <div class="sidebar">
+        <header>
+            <img src="https://uvnetware.com/raw/logo-branding/uv-netware-ti.png" class="logo">
+            <p class="company-name">Welcome</p>
+        </header>
+        <ul class="sidebar-menu">
+            <li class="active">Dashboard Overview</li>
+        </ul>
+    </div>
+
+    <!-- ------------------ MOBILE SIDEBAR ------------------ -->
+    <div class="mobile-overlay" id="mobile_menu">
+        <ul class="sidebar-menu">
+            <li class="active">Dashboard Overview</li>
+        </ul>
+    </div>
+    <div class="overlay-backdrop" id="backdrop"></div>
+
+
+    <!-- ------------------ CONTENT AREA ------------------ -->
+    <div class="content-area">
+
+        <h1 class="page-title">Onboarding Status</h1>
+
+        <div id="referenceBox" class="ref-box">
+            Reference Number: Loading...
+        </div>
+
+        <!-- Cards -->
+        <div class="card-grid">
+            <div class="card">
+                <span class="material-icons card-icon">inventory_2</span>
+                <div class="card-title">Onboarding Kit</div>
+                <div class="card-desc">
+                    Your laptop, access card & software setup are being prepared.
+                </div>
+            </div>
+
+            <div class="card">
+                <span class="material-icons card-icon">local_shipping</span>
+                <div class="card-title">Shipment Tracking</div>
+                <div class="card-desc">
+                    You'll receive tracking SMS from Delhivery once dispatched.
+                </div>
+            </div>
+
+            <div class="card">
+                <span class="material-icons card-icon">description</span>
+                <div class="card-title">Bond Dispatch</div>
+                <div class="card-desc">
+                    The bond is being sent to your current living address. Sign & return it.
+                </div>
+            </div>
+
+            <div class="card">
+                <span class="material-icons card-icon">article</span>
+                <div class="card-title">Action Required</div>
+                <div class="card-desc">
+                    Submit signed bond at UV Netware Ahmedabad branch.
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline-box">
+            <h3 style="margin-bottom:14px;">Your Onboarding Progress</h3>
+
+            <div class="timeline-step">
+                <div class="timeline-title">HR Verification Completed</div>
+                <div class="timeline-desc">Your details were successfully reviewed.</div>
+            </div>
+
+            <div class="timeline-step">
+                <div class="timeline-title">Kit Preparation</div>
+                <div class="timeline-desc">Hardware & software setup in progress.</div>
+            </div>
+
+            <div class="timeline-step">
+                <div class="timeline-title">Bond Sent</div>
+                <div class="timeline-desc">Sent to your current living address.</div>
+            </div>
+
+            <div class="timeline-step">
+                <div class="timeline-title">Bond Submission Pending</div>
+                <div class="timeline-desc">Submit at Ahmedabad branch.</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    /* ------------------ MOBILE MENU TOGGLE ------------------ */
+    const hamburger = document.getElementById("hamburger_btn");
+    const mobileMenu = document.getElementById("mobile_menu");
+    const backdrop = document.getElementById("backdrop");
+
+    function toggleMenu() {
+        const open = mobileMenu.classList.toggle("open");
+        hamburger.classList.toggle("open", open);
+        backdrop.classList.toggle("open", open);
+    }
+
+    hamburger.addEventListener("click", toggleMenu);
+    backdrop.addEventListener("click", toggleMenu);
+
+
+    /* ------------------ LOAD FIREBASE REFERENCE ------------------ */
+    const userId = ("EH102UVNS");
+    const refBox = document.getElementById("referenceBox");
+
+    async function loadReference() {
+        if (!userId) {
+            refBox.textContent = "Reference Number: Missing User ID";
+            return;
+        }
+
+        const url = `https://uvnetware-default-rtdb.firebaseio.com/oep/${userId}.json`;
+
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+
+            if (!data) {
+                refBox.textContent = "Reference Number: Not Found";
+                return;
+            }
+
+            const reference = data.reference || "N/A";
+            refBox.innerHTML = `Reference Number: <b>${reference}</b>`;
+
+        } catch (err) {
+            refBox.textContent = "Reference Number: Error Loading";
+        }
+    }
+
+    loadReference();
+</script>
+
+</body>
+</html>

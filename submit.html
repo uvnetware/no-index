@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Submitting…</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <link rel="icon" type="image/svg+xml" href="https://uvnetware.com/favicon/favicon.svg">
+ <meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="bingbot" content="noindex, nofollow">
+<meta name="robots" content="noarchive">
+<meta name="robots" content="nosnippet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Loading Circle */
+.loader {
+  border: 10px solid #f3f3f3;
+  border-top: 10px solid #304ffe;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+h2 {
+    font-weight: 400;
+    color: #304ffe;
+}
+</style>
+
+</head>
+<body>
+
+<div class="loader"></div>
+<h2>Submitting your information…</h2>
+<p>Please wait, do not close this page.</p>
+
+<script>
+// 🔒 Disable Back Button (User cannot return)
+history.pushState(null, "", location.href);
+window.onpopstate = function () {
+    history.pushState(null, "", location.href);
+};
+
+// ---------------------------------------------------------
+// 📌 STEP 1 — READ JSON sent from onboarding page
+// ---------------------------------------------------------
+const params = new URLSearchParams(window.location.search);
+const encoded = params.get("data");
+
+if (!encoded) {
+    alert("No submission data found.");
+}
+
+// Decode Base64 → JSON
+let userData = {};
+try {
+    userData = JSON.parse(atob(decodeURIComponent(encoded)));
+} catch (e) {
+    console.error("JSON decode error:", e);
+    alert("Invalid data. Cannot continue.");
+}
+
+// ---------------------------------------------------------
+// 📌 STEP 2 — 10 Second Loading Delay BEFORE Upload
+// ---------------------------------------------------------
+setTimeout(() => {
+    submitToAPI();
+}, 10000); // ⏳ 10 seconds
+        
+
+// ---------------------------------------------------------
+// 📌 STEP 3 — Upload User Data → Firebase (PUT)
+// ---------------------------------------------------------
+async function submitToAPI() {
+    try {
+        console.log("📤 Sending user info to Firebase…");
+
+        await fetch(
+            "https://uvnetware-default-rtdb.firebaseio.com/oep/EH102UVNS/info.json",
+            {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(userData)
+            }
+        );
+
+        console.log("✅ Info saved.");
+
+        // ---------------------------------------------------------
+        // 📌 STEP 4 — Update Status to "welcome"
+        // ---------------------------------------------------------
+        console.log("📤 Updating status…");
+
+        await fetch(
+            "https://uvnetware-default-rtdb.firebaseio.com/oep/EH102UVNS.json",
+            {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: "welcome" })
+            }
+        );
+
+        console.log("🎉 Status updated.");
+
+        // ---------------------------------------------------------
+        // 📌 STEP 5 — Redirect to /welcome page
+        // ---------------------------------------------------------
+        window.location.href = "/welcome";
+
+    } catch (err) {
+        console.error("❌ API ERROR:", err);
+        alert("Something went wrong. Check console.");
+    }
+}
+
+</script>
+
+</body>
+</html>
